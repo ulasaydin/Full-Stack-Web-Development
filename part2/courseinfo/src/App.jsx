@@ -21,10 +21,10 @@ const Content = (props) => {
 };
  
 const Total = (props) => {
-  const sum = props.parts.map(part => part.exercises).reduce((a, b) => a + b, 0);
+  const total = props.parts.reduce((s, p) => s + p.exercises, 0);
   return (
     <p>
-      <strong>total of {sum} exercises</strong>
+      <strong>total of {total} exercises</strong>
     </p>
   );
 }
