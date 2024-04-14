@@ -2,21 +2,21 @@ import { useEffect, useState } from 'react'
 import Filter from './components/Filter'
 import PersonForm from './components/PersonForm'
 import Persons from './components/Persons'
-import axios from 'axios'
+import personService from './services/persons'
 
 const App = () => {
   const [persons, setPersons] = useState([])
-  useEffect(() => {
-    axios.get('http://localhost:3001/persons')
-      .then(response => {
-        setPersons(response.data);
-      })
-      .catch(error => console.error('Error fetching data: ', error));
-  }, []);
-
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
   const [filter, setFilter] = useState('')
+
+  useEffect(() => {
+    personService
+      .getAll()
+      .then(initialPersons => {
+        setPersons(initialPersons)
+      })
+  }, []);
 
   const handleNameChange = (event) => {
     setNewName(event.target.value)
@@ -43,13 +43,12 @@ const App = () => {
       setNewNumber('')
       return
     }
-    axios.post('http://localhost:3001/persons', person)
-      .then(response => {
-        setPersons(persons.concat(response.data))
+    personService.create(person)
+      .then(returnedPerson => {
+        setPersons(persons.concat(returnedPerson))
         setNewName('')
         setNewNumber('')
       })
-      .catch(error => console.error('Error adding person: ', error));
   }
 
   const filteredPersons = persons.filter(person =>
