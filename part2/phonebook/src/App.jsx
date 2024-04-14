@@ -13,7 +13,7 @@ const App = () => {
       })
       .catch(error => console.error('Error fetching data: ', error));
   }, []);
-  
+
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
   const [filter, setFilter] = useState('')
@@ -43,9 +43,13 @@ const App = () => {
       setNewNumber('')
       return
     }
-    setPersons(persons.concat(person))
-    setNewName('')
-    setNewNumber('')
+    axios.post('http://localhost:3001/persons', person)
+      .then(response => {
+        setPersons(persons.concat(response.data))
+        setNewName('')
+        setNewNumber('')
+      })
+      .catch(error => console.error('Error adding person: ', error));
   }
 
   const filteredPersons = persons.filter(person =>
