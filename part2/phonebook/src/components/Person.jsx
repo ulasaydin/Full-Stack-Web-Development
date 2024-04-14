@@ -1,7 +1,11 @@
 import React from 'react';
 
-const Person = ({ name, number }) => {
-  return <p>{name} {number}</p>;
+const Person = ({ id, name, number, onDeletePerson }) => {
+  return (
+    <div>
+      {name} {number} <button onClick={() => onDeletePerson(id,name)}>delete</button>
+    </div>
+  );
 }
 
 export default Person;
