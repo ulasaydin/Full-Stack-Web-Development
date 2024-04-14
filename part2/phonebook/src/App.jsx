@@ -3,12 +3,15 @@ import Filter from './components/Filter'
 import PersonForm from './components/PersonForm'
 import Persons from './components/Persons'
 import personService from './services/persons'
+import Notification from './components/Notification'
 
 const App = () => {
   const [persons, setPersons] = useState([])
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
   const [filter, setFilter] = useState('')
+  const [notification, setNotification] = useState(null)
+  const [notificationClass, setNotificationClass] = useState('notification');
 
   useEffect(() => {
     personService
@@ -30,6 +33,14 @@ const App = () => {
     setFilter(event.target.value)
   }
 
+  const showNotification = (message, styleClass = 'notification') => {
+    setNotification(message)
+    setNotificationClass(styleClass)
+    setTimeout(() => {
+      setNotification(null)
+    }, 5000)
+  }
+
   const addPerson = (event) => {
     event.preventDefault()
     const person = {
@@ -42,6 +53,7 @@ const App = () => {
         personService.update(existingPerson.id, person)
           .then(returnedPerson => {
             setPersons(persons.map(p => p.id !== existingPerson.id ? p : returnedPerson))
+            showNotification(`Updated ${returnedPerson.name}`, 'notification')
             setNewName('')
             setNewNumber('')
           })
@@ -51,6 +63,7 @@ const App = () => {
       personService.create(person)
         .then(returnedPerson => {
           setPersons(persons.concat(returnedPerson))
+          showNotification(`Added ${returnedPerson.name}`, 'notification')
           setNewName('')
           setNewNumber('')
         })
@@ -68,12 +81,14 @@ const App = () => {
       personService.deletePerson(id)
         .then(() => {
           setPersons(persons.filter(p => p.id !== id))
+          showNotification(`Deleted ${person.name}`, 'error')
         })
     }
   }
   return (
     <div>
       <h2>Phonebook</h2>
+      <Notification message={notification} styleClass={notificationClass} />
       <Filter filter={filter} handleFilterChange={handleFilterChange} />
 
       <h2>add a new</h2>
