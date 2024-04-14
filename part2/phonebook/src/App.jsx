@@ -36,19 +36,25 @@ const App = () => {
       name: newName,
       number: newNumber
     }
-    const isNameAlreadyAdded = persons.some(p => p.name === newName)
-    if (isNameAlreadyAdded) {
-      alert(`${newName} is already added to the phonebook`)
-      setNewName('')
-      setNewNumber('')
-      return
+    const existingPerson = persons.find(p => p.name === newName)
+    if (existingPerson) {
+      if (window.confirm(`${newName} is already added to the phonebook, replace the old number with a new one?`)) {
+        personService.update(existingPerson.id, person)
+          .then(returnedPerson => {
+            setPersons(persons.map(p => p.id !== existingPerson.id ? p : returnedPerson))
+            setNewName('')
+            setNewNumber('')
+          })
+      }
+    
+    } else {
+      personService.create(person)
+        .then(returnedPerson => {
+          setPersons(persons.concat(returnedPerson))
+          setNewName('')
+          setNewNumber('')
+        })
     }
-    personService.create(person)
-      .then(returnedPerson => {
-        setPersons(persons.concat(returnedPerson))
-        setNewName('')
-        setNewNumber('')
-      })
   }
 
   const filteredPersons = persons.filter(person =>
