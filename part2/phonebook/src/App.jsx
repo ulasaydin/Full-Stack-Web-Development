@@ -54,9 +54,13 @@ const App = () => {
           .then(returnedPerson => {
             setPersons(persons.map(p => p.id !== existingPerson.id ? p : returnedPerson))
             showNotification(`Updated ${returnedPerson.name}`, 'notification')
-            setNewName('')
-            setNewNumber('')
           })
+          .catch(error => {
+            showNotification(`Information of ${newName} has already been removed from the server`, 'error')
+            setPersons(persons.filter(p => p.id !== existingPerson.id))
+          })
+          setNewName('')
+          setNewNumber('')  
       }
     
     } else {
