@@ -2,56 +2,56 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import { useEffect } from 'react';
 import Filter from './components/Filter';
+import Countries from './components/Countries';
+import Country from './components/Country';
 
 function App() {
   const [countries, setCountries] = useState([]);
   const [filter, setFilter] = useState('');
+  const [showCountry, setShowCountry] = useState('');
 
   const handleFilterChange = (event) => {
     setFilter(event.target.value);
   }
 
+  const handleShowCountry = (country) => {
+    setShowCountry(country);
+  }
+
+  const displayCountries = () => {
+    if (showCountry) {
+        return <Country country={showCountry} />;
+    } else if (filteredCountries.length > 10) {
+        return <p>Too many matches, specify another filter</p>;
+    } else if (filteredCountries.length > 1) {
+        return <Countries countries={filteredCountries} onShowCountry={handleShowCountry} />;
+    } else if (filteredCountries.length === 1) {
+        return <Country country={filteredCountries[0]} />;
+    }
+    return null;
+};
+
   const filteredCountries = countries.filter(country => country.name.common.toLowerCase().includes(filter.toLowerCase()));
 
   useEffect (() => {
+    if (filter) {
       axios
         .get('https://restcountries.com/v3.1/all')
         .then(response => {
           setCountries(response.data);
+          setShowCountry(null)
         })
-    }, []
+    } else {
+    setCountries([])
+  }
+  }, [filter]
   )
 
   
   return (
     <div>
       <Filter filter={filter} handleFilterChange={handleFilterChange} />
-      <div>
-        {filteredCountries.length > 10 ? (
-          <p>Too many matches, specify another filter</p>
-        ) : filteredCountries.length === 1 ? (
-          <div>
-            <h1>{filteredCountries[0].name.common}</h1>
-            <div>capital {filteredCountries[0].capital[0]}</div>
-            <div>population {filteredCountries[0].population}</div>
-            <h2>languages</h2>
-            <ul>
-              {Object.values(filteredCountries[0].languages).map(language => (
-                <li key={language}>{language}</li>
-              ))}
-            </ul>
-            <img src={filteredCountries[0].flags.png} alt={filteredCountries[0].name.common} width="100" />
-          </div>
-        
-        ) : (
-          filteredCountries.map(country => (
-            <div key={country.name.common}>
-              {country.name.common}
-            </div>
-          ))
-        )}
-        
-      </div>
+      {displayCountries()}
     </div>
   );
 }
