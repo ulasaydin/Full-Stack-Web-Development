@@ -70,6 +70,8 @@ const App = () => {
           showNotification(`Added ${returnedPerson.name}`, 'notification')
           setNewName('')
           setNewNumber('')
+        }).catch(error => {
+          showNotification(error.response.data.error, 'error')
         })
     }
   }
