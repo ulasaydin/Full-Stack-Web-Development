@@ -1,9 +1,10 @@
 const Blog = require('../models/blog');
 const blogsRouter = require('express').Router()
+const User = require('../models/user')
 
 blogsRouter.get('/', async (request, response) => {
   try {
-    const blogs = await Blog.find({})
+    const blogs = await Blog.find({}).populate('user', { username: 1, name: 1 })
     response.json(blogs)
   } catch (error) {
     response.status(500).json({ error: 'Something went wrong' })
@@ -12,18 +13,27 @@ blogsRouter.get('/', async (request, response) => {
 
 blogsRouter.post('/', async (request, response) => {
   try {
-    const blog = new Blog(request.body)
-    if (!blog.likes) {
-      blog.likes = 0
+    const body = request.body
+    const user = await User.findById(body.userId)
+    if(body.title === undefined || body.url === undefined) {
+      return response.status(400).json({ error: 'Title or URL is missing' })
+    } else {
+      const blog = new Blog( {
+        url: body.url,
+        title: body.title,
+        author: body.author === undefined ? '' : body.author,
+        user: user._id,
+        likes: body.likes === undefined ? 0 : body.likes,
+      })
+  
+      const savedBlog = await blog.save()
+  
+      user.blogs = user.blogs.concat(savedBlog._id)
+      await user.save()
+      response.status(201).json(savedBlog)
     }
-    if (!blog.title || !blog.url) {
-      return response.status(400).json({ error: 'title or url missing' })
-    }
-    
-    const savedBlog = await blog.save()
-    response.status(201).json(savedBlog)
   } catch (error) {
-    response.status(500).json({ error: 'Something went wrong' })
+    response.status(500).json({ error: error.message })
   }
 })
 
