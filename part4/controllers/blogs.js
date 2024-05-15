@@ -45,10 +45,22 @@ blogsRouter.post('/', async (request, response) => {
 
 blogsRouter.delete('/:id', async (request, response) => {
   try {
+    const decodedToken = jwt.verify(request.token, process.env.SECRET)
+    if (!decodedToken.id) {
+      return response.status(401).json({ error: 'token invalid' })
+    }
+
+    const blog = await Blog.findById(request.params.id)
+    const user = await User.findById(decodedToken.id)
+
+    if (blog.user.toString() !== user._id.toString()) {
+      return response.status(401).json({ error: 'Unauthorized' })
+    }
+
     await Blog.findByIdAndDelete(request.params.id)
     response.status(204).end()
   } catch (error) {
-    response.status(500).json({ error: 'Something went wrong' })
+    response.status(500).json({ error: error.message })
   }
 })
 
@@ -59,7 +71,7 @@ blogsRouter.put('/:id', async (request, response) => {
       = await Blog.findByIdAndUpdate(request.params.id, blog, { new: true })
     response.json(updatedBlog)
   } catch (error) {
-    response.status(500).json({ error: 'Something went wrong' })
+    response.status(500).json({ error: error.message })
   }
 })
 
