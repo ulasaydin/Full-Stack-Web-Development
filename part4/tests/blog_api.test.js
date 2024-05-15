@@ -98,7 +98,21 @@ test('blos without url or title are not added', async () => {
 
 }) 
 
+test('a blog can be deleted', async () => {
+  let response = await api.get('/api/blogs')
+  const blogToDelete = response.body[0]
+  console.log(blogToDelete)
+  await api
+    .delete(`/api/blogs/${blogToDelete._id}`)
+    .expect(204)
 
+  response = await api.get('/api/blogs')
+  const blogsAtEnd = response.body
+  expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length - 1)
+
+  const titles = blogsAtEnd.map(r => r.title)
+  expect(titles).not.toContain(blogToDelete.title)
+})
 
 afterAll(() => {
   mongoose.connection.close()
