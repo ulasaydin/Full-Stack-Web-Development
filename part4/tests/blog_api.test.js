@@ -70,6 +70,36 @@ test('likes property defaults to 0', async () => {
   expect(response.body.likes).toBe(0)
 })
 
+test('blos without url or title are not added', async () => {
+  const newBlogNoTitle = {
+    author: "Edsger W. Dijkstra",
+    url: "http://www.cs.utexas.edu/~EWD/transcriptions/EWD08xx/EWD808.html",
+    likes: 12
+  }
+
+  const newBlogNoUrl = {
+    title: "Canonical string reduction",
+    author: "Edsger W. Dijkstra",
+    likes: 12
+  }
+
+  await api
+    .post('/api/blogs')
+    .send(newBlogNoTitle)
+    .expect(400)
+
+  await api
+    .post('/api/blogs')
+    .send(newBlogNoUrl)
+    .expect(400)
+
+  const response = await api.get('/api/blogs')
+  expect(response.body).toHaveLength(helper.initialBlogs.length)
+
+}) 
+
+
+
 afterAll(() => {
   mongoose.connection.close()
 })
