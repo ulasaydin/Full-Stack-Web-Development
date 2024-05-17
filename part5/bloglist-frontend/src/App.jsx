@@ -1,11 +1,11 @@
 import { useState, useEffect } from 'react'
 import Blog from './components/Blog'
+import Notification from './components/Notification'
 import blogService from './services/blogs'
 import loginService from './services/login'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
-  const [errorMessage, setErrorMessage] = useState(null)
   const [username, setUsername] = useState('') 
   const [password, setPassword] = useState('') 
   const [user, setUser] = useState(null)
@@ -13,6 +13,9 @@ const App = () => {
   const [title, setTitle] = useState('')
   const [author, setAuthor] = useState('')
   const [url, setUrl] = useState('')
+
+  const [notification, setNotification] = useState(null)
+  const [notificationClass, setNotificationClass] = useState('notification');
 
 
   useEffect(() => {
@@ -48,9 +51,10 @@ const App = () => {
       setPassword('')
 
     } catch (exception) {
-      setErrorMessage('Wrong credentials')
+      setNotification('wrong username or password')
+      setNotificationClass('error')
       setTimeout(() => {
-        setErrorMessage(null)
+        setNotification(null)
       }, 5000)
     }
   }
@@ -69,11 +73,17 @@ const App = () => {
       setTitle('')
       setAuthor('')
       setUrl('')
+      setNotification(`a new blog ${returnedBlog.title} by ${returnedBlog.author} added`)
+      setNotificationClass('notification')
+      setTimeout(() => {
+        setNotification(null)
+      }, 5000)
     }
     catch (exception) {
-      setErrorMessage('Failed to add blog')
+      setNotification('Failed to add blog')
+      setNotificationClass('error')
       setTimeout(() => {
-        setErrorMessage(null)
+        setNotification(null)
       }, 5000)
     }
   }
@@ -85,9 +95,10 @@ const App = () => {
       window.localStorage.removeItem('loggedBlogappUser')
       setUser(null)
     } catch (exception) {
-      setErrorMessage('Logout failed')
+      setNotification('Failed to logout')
+      setNotificationClass('error')
       setTimeout(() => {
-        setErrorMessage(null)
+        setNotification(null)
       }, 5000)
     }
   }
@@ -153,6 +164,7 @@ const App = () => {
     return (
       <div>
         <h2>Log in to application</h2>
+        <Notification message={notification} styleClass={notificationClass} />
         {loginForm()}
       </div>
     )
@@ -161,6 +173,7 @@ const App = () => {
   return (
     <div>
       <h2>blogs</h2>
+      <Notification message={notification} styleClass={notificationClass} />
       <p>{user.name} logged in <button onClick={handleLogout}>logout</button> </p>
       <h2>create new</h2>
       {blogForm()}
