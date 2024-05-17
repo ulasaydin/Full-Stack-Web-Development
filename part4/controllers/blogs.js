@@ -1,5 +1,6 @@
 const Blog = require('../models/blog');
 const blogsRouter = require('express').Router()
+const {userExtractor} = require('../utils/middleware')
 
 blogsRouter.get('/', async (request, response) => {
   try {
@@ -10,9 +11,10 @@ blogsRouter.get('/', async (request, response) => {
   }
 })
 
-blogsRouter.post('/', async (request, response) => {
+blogsRouter.post('/',userExtractor , async (request, response, next) => {
   try {
     const user =  request.user
+    const body = request.body
     if(body.title === undefined || body.url === undefined) {
       return response.status(400).json({ error: 'Title or URL is missing' })
     } else {
@@ -35,7 +37,7 @@ blogsRouter.post('/', async (request, response) => {
   }
 })
 
-blogsRouter.delete('/:id', async (request, response) => {
+blogsRouter.delete('/:id', userExtractor, async (request, response, next) => {
   try {
     const blog = await Blog.findById(request.params.id)
     const user = request.user
