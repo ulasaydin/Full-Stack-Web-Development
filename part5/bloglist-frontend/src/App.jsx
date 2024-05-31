@@ -91,6 +91,25 @@ const App = () => {
     }
   }
 
+  const updateBlog = async (id, blogObject) => {
+    try {
+      const returnedBlog = await blogService.update(id, blogObject)
+      setBlogs(blogs.map(blog => blog.id !== id ? blog : returnedBlog))
+      setNotification(`blog ${returnedBlog.title} updated`)
+      setNotificationClass('notification')
+      setTimeout(() => {
+        setNotification(null)
+      }, 5000)
+    }
+    catch (exception) {
+      setNotification('Failed to update blog')
+      setNotificationClass('error')
+      setTimeout(() => {
+        setNotification(null)
+      }, 5000)
+    }
+  }
+
   const handleLogout = async (event) => { 
     event.preventDefault()
     try {
@@ -141,7 +160,7 @@ const App = () => {
       </Togglable>
 
       {blogs.map(blog =>
-        <Blog key={blog.id} blog={blog} />
+        <Blog key={blog.id} blog={blog} updateBlog={updateBlog} />
       )}
     </div>
   )
