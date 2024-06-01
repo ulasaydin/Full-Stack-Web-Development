@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useState } from 'react'
 
 const Blog = ({ user, blog, updateBlog, deleteBlog }) => {
   const blogStyle = {
@@ -14,10 +14,10 @@ const Blog = ({ user, blog, updateBlog, deleteBlog }) => {
   const toggleVisibility = () => {
     setVisible(!visible)
   }
-  
+
   const handleLikes = async () => {
-    
-    const updatedBlog = { 
+
+    const updatedBlog = {
       author: blog.author,
       title: blog.title,
       url: blog.url,

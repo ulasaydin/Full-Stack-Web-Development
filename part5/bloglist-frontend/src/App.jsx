@@ -9,8 +9,8 @@ import BlogForm from './components/BlogForm'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
-  const [username, setUsername] = useState('') 
-  const [password, setPassword] = useState('') 
+  const [username, setUsername] = useState('')
+  const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
 
   const [title, setTitle] = useState('')
@@ -18,13 +18,13 @@ const App = () => {
   const [url, setUrl] = useState('')
 
   const [notification, setNotification] = useState(null)
-  const [notificationClass, setNotificationClass] = useState('notification');
+  const [notificationClass, setNotificationClass] = useState('notification')
 
 
   useEffect(() => {
     blogService.getAll().then(blogs =>
       setBlogs( blogs )
-    )  
+    )
   }, [])
 
   useEffect(() => {
@@ -47,7 +47,7 @@ const App = () => {
       window.localStorage.setItem(
         'loggedBlogappUser', JSON.stringify(user)
       )
-      
+
       blogService.setToken(user.token)
       setUser(user)
       setUsername('')
@@ -130,7 +130,7 @@ const App = () => {
     }
   }
 
-  const handleLogout = async (event) => { 
+  const handleLogout = async (event) => {
     event.preventDefault()
     try {
 
@@ -145,7 +145,7 @@ const App = () => {
     }
   }
 
-  const compareLikes = (a, b) => { 
+  const compareLikes = (a, b) => {
     return b.likes - a.likes
   }
 

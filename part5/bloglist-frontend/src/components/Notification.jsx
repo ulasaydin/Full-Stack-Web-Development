@@ -1,4 +1,4 @@
-import React from "react";
+import React from 'react'
 
 const Notification = ({ message, styleClass }) => {
   if (message === null) {
@@ -13,4 +13,4 @@ const Notification = ({ message, styleClass }) => {
 }
 
 
-export default Notification;
+export default Notification
