@@ -111,6 +111,25 @@ const App = () => {
     }
   }
 
+  const deleteBlog = async (id) => {
+    try {
+      await blogService.remove(id)
+      setBlogs(blogs.filter(blog => blog.id !== id))
+      setNotification('Blog is successfully deleted')
+      setNotificationClass('notification')
+      setTimeout(() => {
+        setNotification(null)
+      }, 5000)
+    }
+    catch (exception) {
+      setNotification('Failed to delete blog')
+      setNotificationClass('error')
+      setTimeout(() => {
+        setNotification(null)
+      }, 5000)
+    }
+  }
+
   const handleLogout = async (event) => { 
     event.preventDefault()
     try {
@@ -164,7 +183,8 @@ const App = () => {
         />
       </Togglable>
       {blogs.sort(compareLikes).map(blog =>
-        <Blog key={blog.id} blog={blog} updateBlog={updateBlog} />
+
+        <Blog key={blog.id} blog={blog} user={user} updateBlog={updateBlog} deleteBlog={deleteBlog} />
       )}
     </div>
   )
