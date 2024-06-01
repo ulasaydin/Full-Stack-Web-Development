@@ -94,6 +94,7 @@ const App = () => {
   const updateBlog = async (id, blogObject) => {
     try {
       const returnedBlog = await blogService.update(id, blogObject)
+      returnedBlog.user = blogs.find(blog => blog.id === id).user
       setBlogs(blogs.map(blog => blog.id !== id ? blog : returnedBlog))
       setNotification(`blog ${returnedBlog.title} updated`)
       setNotificationClass('notification')
@@ -160,7 +161,7 @@ const App = () => {
       </Togglable>
 
       {blogs.map(blog =>
-        <Blog key={blog.id} blog={blog} updateBlog={updateBlog} />
+        <Blog key={blog.id} blog={blog}  updateBlog={updateBlog} />
       )}
     </div>
   )
