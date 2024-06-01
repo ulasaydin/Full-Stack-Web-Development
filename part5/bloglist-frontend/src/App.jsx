@@ -126,6 +126,10 @@ const App = () => {
     }
   }
 
+  const compareLikes = (a, b) => { 
+    return b.likes - a.likes
+  }
+
   if (user === null) {
     return (
       <div>
@@ -159,9 +163,8 @@ const App = () => {
           handleUrlChange={({ target }) => setUrl(target.value)}
         />
       </Togglable>
-
-      {blogs.map(blog =>
-        <Blog key={blog.id} blog={blog}  updateBlog={updateBlog} />
+      {blogs.sort(compareLikes).map(blog =>
+        <Blog key={blog.id} blog={blog} updateBlog={updateBlog} />
       )}
     </div>
   )
