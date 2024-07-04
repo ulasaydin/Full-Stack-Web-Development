@@ -1,6 +1,7 @@
 import { render, screen } from '@testing-library/react'
 import Blog from './Blog'
 import { test } from 'vitest'
+import userEvent from '@testing-library/user-event'
 
 test('renders content', () => {
   const blog = {
@@ -35,10 +36,8 @@ test('clicking the button shows the url and likes', async () => {
     url: 'http://example.com',
     user: { id: '1', name: 'Tester', username: 'tester' },
   }
-  const user = {
-    username: 'tester',
-  }
 
+  const user = userEvent.setup()
   render(<Blog user={user} blog={blog} />)
 
   let urlElement = screen.queryByText(blog.url)
@@ -48,7 +47,7 @@ test('clicking the button shows the url and likes', async () => {
   expect(likesElement).not.toBeInTheDocument()
 
   const button = screen.getByText('view')
-  await button.click()
+  await userEvent.click(button)
   
   urlElement = screen.queryByText(blog.url)
   likesElement = screen.queryByText(`likes ${blog.likes}`)
@@ -70,20 +69,19 @@ test('clicking the button twice calls event handler twice', async () => {
     },
   }
 
-  const user = {
-    username: 'tester',
-  }
+  const user = userEvent.setup()
+
 
   const updateBlog = vi.fn()
 
   render(<Blog user={user} blog={blog} updateBlog={updateBlog} />)
 
   const button = screen.getByText('view')
-  await button.click()
+  await user.click(button)
 
   const likeButton = screen.getByText('like')
-  await likeButton.click()
-  await likeButton.click()
+  await user.click(likeButton)
+  await user.click(likeButton)
 
   expect(updateBlog.mock.calls).toHaveLength(2)
 })

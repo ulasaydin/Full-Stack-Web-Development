@@ -13,9 +13,6 @@ const App = () => {
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
 
-  const [title, setTitle] = useState('')
-  const [author, setAuthor] = useState('')
-  const [url, setUrl] = useState('')
 
   const [notification, setNotification] = useState(null)
   const [notificationClass, setNotificationClass] = useState('notification')
@@ -62,20 +59,10 @@ const App = () => {
     }
   }
 
-  const addBlog = async (event) => {
-    event.preventDefault()
+  const addBlog = async (blogObject) => {
     try {
-      const blogObject = {
-        title: title,
-        author: author,
-        url: url,
-      }
-
       const returnedBlog = await blogService.create(blogObject)
       setBlogs(blogs.concat(returnedBlog))
-      setTitle('')
-      setAuthor('')
-      setUrl('')
       setNotification(`a new blog ${returnedBlog.title} by ${returnedBlog.author} added`)
       setNotificationClass('notification')
       setTimeout(() => {
@@ -174,12 +161,6 @@ const App = () => {
       <Togglable buttonLabel='create new blog'>
         <BlogForm
           addBlog={addBlog}
-          title={title}
-          author={author}
-          url={url}
-          handleTitleChange={({ target }) => setTitle(target.value)}
-          handleAuthorChange={({ target }) => setAuthor(target.value)}
-          handleUrlChange={({ target }) => setUrl(target.value)}
         />
       </Togglable>
       {blogs.sort(compareLikes).map(blog =>
