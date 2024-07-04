@@ -56,3 +56,34 @@ test('clicking the button shows the url and likes', async () => {
   expect(urlElement).toBeInTheDocument()
   expect(likesElement).toBeInTheDocument()
 })
+
+test('clicking the button twice calls event handler twice', async () => {
+  const blog = {
+    title: 'Component testing is done with react-testing-library',
+    author: 'Arto Hellas',
+    likes: 10,
+    url: 'http://example.com',
+    user: {
+      id: '1',
+      name: 'Tester',
+      username: 'tester',
+    },
+  }
+
+  const user = {
+    username: 'tester',
+  }
+
+  const updateBlog = vi.fn()
+
+  render(<Blog user={user} blog={blog} updateBlog={updateBlog} />)
+
+  const button = screen.getByText('view')
+  await button.click()
+
+  const likeButton = screen.getByText('like')
+  await likeButton.click()
+  await likeButton.click()
+
+  expect(updateBlog.mock.calls).toHaveLength(2)
+})
