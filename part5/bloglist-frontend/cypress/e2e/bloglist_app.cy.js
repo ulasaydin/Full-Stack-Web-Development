@@ -1,12 +1,13 @@
 describe('Bloglist app', function() {
   beforeEach(function() {
+    cy.request('POST', 'http://localhost:3001/api/testing/reset')
+    const user = {
+      name: 'Matti Luukkainen',
+      username: 'testuser',
+      password: 'testpassword'
+    }
+    cy.request('POST', 'http://localhost:3001/api/users/', user)
     cy.visit('http://localhost:5173')
-    // const user = {
-    //   name: 'Matti Luukkainen',
-    //   username: 'testuser',
-    //   password: 'testpassword'
-    // }
-    // cy.request('POST', 'http://localhost:5173/api/users/', user)
   })
 
   it('Login form is shown', function() {
@@ -35,4 +36,26 @@ describe('Bloglist app', function() {
       .and('have.css', 'color', 'rgb(255, 0, 0)')
     cy.get('html').should('not.contain', 'Matti Luukkainen logged in')
   })
+
+  describe('When logged in', function() {
+    beforeEach(function() {
+      cy.contains('Log in to application')
+      cy.get('#username').type('testuser')
+      cy.get('#password').type('testpassword')
+      cy.get('#login-button').click()
+
+      cy.contains('Matti Luukkainen logged in')
+    })
+
+    it('A blog can be created', function() {
+      cy.contains('new blog').click()
+      cy.get('#title-input').type('Test Blog Title')
+      cy.get('#author-input').type('Test Author')
+      cy.get('#url-input').type('http://testurl.com')
+      cy.get('#create-button').click()
+
+      cy.contains('Test Blog Title Test Author')
+    })
+  })
+
 })
