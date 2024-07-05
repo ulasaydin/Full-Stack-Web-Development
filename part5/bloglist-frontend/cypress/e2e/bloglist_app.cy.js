@@ -56,6 +56,33 @@ describe('Bloglist app', function() {
 
       cy.contains('Test Blog Title Test Author')
     })
+    
+    it('A blog can be liked', function() {
+      // Create a new blog
+      cy.contains('new blog').click()
+      cy.get('#title-input').type('Test Blog Title')
+      cy.get('#author-input').type('Test Author')
+      cy.get('#url-input').type('http://testurl.com')
+      cy.get('#create-button').click()
+
+      // Ensure the new blog is created and visible
+      cy.contains('Test Blog Title Test Author')
+
+      // Open the blog details
+      cy.contains('Test Blog Title Test Author')
+        .parent()
+        .contains('view')
+        .click()
+
+      // Click the like button
+      cy.contains('likes 0')
+        .parent()
+        .contains('like')
+        .click()
+
+      // Verify the like count has increased
+      cy.contains('likes 1')
+    })
   })
 
 })
