@@ -104,7 +104,7 @@ describe('Bloglist app', function() {
       cy.contains('Test Blog Title Test Author').should('not.exist')
     })
     
-    it.only('Only the creator can see the delete button', function() {
+    it('Only the creator can see the delete button', function() {
       const user2 = {
         name: 'Test Clone',
         username: 'testuser1',
@@ -150,6 +150,90 @@ describe('Bloglist app', function() {
         .contains('remove')
         .should('not.exist')
     })
-  })
 
+    it('Blogs are ordered by likes', function() {
+      cy.contains('new blog').click()
+      cy.get('#title-input').type('First Blog')
+      cy.get('#author-input').type('Author One')
+      cy.get('#url-input').type('http://firstblog.com')
+      cy.get('#create-button').click()
+      cy.contains('First Blog Author One')
+  
+      cy.contains('new blog').click()
+      cy.get('#title-input').type('Second Blog')
+      cy.get('#author-input').type('Author Two')
+      cy.get('#url-input').type('http://secondblog.com')
+      cy.get('#create-button').click()
+      cy.contains('Second Blog Author Two')
+  
+      cy.contains('new blog').click()
+      cy.get('#title-input').type('Third Blog')
+      cy.get('#author-input').type('Author Three')
+      cy.get('#url-input').type('http://thirdblog.com')
+      cy.get('#create-button').click()
+      cy.contains('Third Blog Author Three')
+  
+      cy.contains('First Blog Author One')
+        .parent()
+        .contains('view')
+        .click()
+      cy.contains('First Blog Author One')
+        .parent()
+        .contains('like')
+        .as('firstBlogLikeButton')
+      
+      cy.contains('Second Blog Author Two')
+        .parent()
+        .contains('view')
+        .click()
+      cy.contains('Second Blog Author Two')
+        .parent()
+        .contains('like')
+        .as('secondBlogLikeButton')
+  
+      cy.contains('Third Blog Author Three')
+        .parent()
+        .contains('view')
+        .click()
+      cy.contains('Third Blog Author Three')
+        .parent()
+        .contains('like')
+        .as('thirdBlogLikeButton')
+  
+      cy.get('@thirdBlogLikeButton').click()
+      cy.contains('Third Blog Author Three')
+        .parent()
+        .contains('likes 1')
+      cy.get('@thirdBlogLikeButton').click()
+      cy.contains('Third Blog Author Three')
+        .parent()
+        .contains('likes 2')
+      cy.get('@thirdBlogLikeButton').click()
+      cy.contains('Third Blog Author Three')
+        .parent()
+        .contains('likes 3')
+  
+      cy.get('@secondBlogLikeButton').click()
+      cy.contains('Second Blog Author Two')
+        .parent()
+        .contains('likes 1')
+      cy.get('@secondBlogLikeButton').click()
+      cy.contains('Second Blog Author Two')
+        .parent()
+        .contains('likes 2')
+  
+      cy.get('@firstBlogLikeButton').click()
+      cy.contains('First Blog Author One')
+        .parent()
+        .contains('likes 1')
+  
+      cy.reload()
+  
+      cy.get('.blog').should('have.length', 3)
+  
+      cy.get('.blog').eq(0).should('contain', 'Third Blog')
+      cy.get('.blog').eq(1).should('contain', 'Second Blog')
+      cy.get('.blog').eq(2).should('contain', 'First Blog')
+    })
+  })
 })

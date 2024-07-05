@@ -36,14 +36,14 @@ const Blog = ({ user, blog, updateBlog, deleteBlog }) => {
 
   if (!visible) {
     return (
-      <div style={blogStyle}>
+      <div className="blog" style={blogStyle}>
         {blog.title} {blog.author} <button onClick={toggleVisibility}>view</button>
       </div>
     )
   }
 
   return (
-    <div style={blogStyle}>
+    <div className="blog" style={blogStyle}>
       <div>
         {blog.title} {blog.author} <button onClick={toggleVisibility}>hide</button>
       </div>
