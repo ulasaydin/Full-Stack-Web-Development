@@ -103,6 +103,53 @@ describe('Bloglist app', function() {
 
       cy.contains('Test Blog Title Test Author').should('not.exist')
     })
+    
+    it.only('Only the creator can see the delete button', function() {
+      const user2 = {
+        name: 'Test Clone',
+        username: 'testuser1',
+        password: 'testpassword1'
+      }
+      cy.request('POST', 'http://localhost:3001/api/users/', user2)
+
+      cy.contains('Matti Luukkainen logged in')
+
+      cy.contains('new blog').click()
+      cy.get('#title-input').type('Test Blog Title')
+      cy.get('#author-input').type('Test Author')
+      cy.get('#url-input').type('http://testurl.com')
+      cy.get('#create-button').click()
+
+      cy.contains('Test Blog Title Test Author')
+
+      cy.reload()
+
+      cy.contains('Test Blog Title Test Author')
+        .parent()
+        .contains('view')
+        .click()
+      cy.contains('Test Blog Title Test Author')
+        .parent()
+        .contains('remove')
+      
+      cy.get('#logout-button').click()
+      
+      cy.contains('Log in to application')
+      cy.get('#username').type('testuser1')
+      cy.get('#password').type('testpassword1')
+      cy.get('#login-button').click()
+  
+      cy.contains('Test Clone logged in')
+
+      cy.contains('Test Blog Title Test Author')
+        .parent()
+        .contains('view')
+        .click()
+      cy.contains('Test Blog Title Test Author')
+        .parent()
+        .contains('remove')
+        .should('not.exist')
+    })
   })
 
 })
