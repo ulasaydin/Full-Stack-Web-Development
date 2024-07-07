@@ -12,6 +12,12 @@ const AnecdoteForm = () => {
     mutationFn: createAnecdote,
     onSuccess: () => {
       queryClient.invalidateQueries('anecdotes')
+    },
+    onError: (error) => {
+      dispatch({ type: 'SET_NOTIFICATION', data: error.response.data.error })
+      setTimeout(() => {
+        dispatch({ type: 'CLEAR_NOTIFICATION' })
+      }, 5000)
     }
   })
 
@@ -30,8 +36,11 @@ const AnecdoteForm = () => {
       }, 5000)
 
     } else {
-      alert('anecdote must be at least 5 characters long')
-    }
+      dispatch({ type: 'SET_NOTIFICATION', data: 'too short anecdote, must have length 5 or more' })
+      setTimeout(() => {
+        dispatch({ type: 'CLEAR_NOTIFICATION' })
+      }, 5000)
+      }
 }
 
   return (
